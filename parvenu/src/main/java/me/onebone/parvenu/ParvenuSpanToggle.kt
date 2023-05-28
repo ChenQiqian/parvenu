@@ -30,20 +30,23 @@ public fun ParvenuSpanToggle(
 	}
 
 	block(
-		enabled = enabled,
-		onToggle = {
-			val selection = value.selection
+		enabled
+	) {
+		val selection = value.selection
 
-			if (!enabled) {
-				onValueChange(value.plusSpanStyle(
+		if (!enabled) {
+			onValueChange(
+				value.plusSpanStyle(
 					ParvenuString.Range(
 						item = spanFactory(),
 						start = selection.min, end = selection.max,
 						startInclusive = false, endInclusive = true
 					)
-				))
-			} else {
-				onValueChange(value.copy(
+				)
+			)
+		} else {
+			onValueChange(
+				value.copy(
 					parvenuString = value.parvenuString.copy(
 						spanStyles = value.parvenuString.spanStyles.minusSpansInRange(
 							start = selection.min,
@@ -51,8 +54,8 @@ public fun ParvenuSpanToggle(
 							predicate = spanEqualPredicate
 						)
 					)
-				))
-			}
+				)
+			)
 		}
-	)
+	}
 }

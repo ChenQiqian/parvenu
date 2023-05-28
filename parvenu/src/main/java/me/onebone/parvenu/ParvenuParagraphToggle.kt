@@ -30,20 +30,23 @@ public fun ParvenuParagraphToggle(
 	}
 
 	block(
-		enabled = enabled,
-		onToggle = {
-			val selection = value.selection
+		enabled
+	) {
+		val selection = value.selection
 
-			if (!enabled) {
-				onValueChange(value.plusParagraphStyle(
+		if (!enabled) {
+			onValueChange(
+				value.plusParagraphStyle(
 					ParvenuString.Range(
 						item = paragraphFactory(),
 						start = selection.min, end = selection.max,
 						startInclusive = true, endInclusive = true
 					)
-				))
-			} else {
-				onValueChange(value.copy(
+				)
+			)
+		} else {
+			onValueChange(
+				value.copy(
 					parvenuString = value.parvenuString.copy(
 						paragraphStyles = value.parvenuString.paragraphStyles.removeIntersectingWithRange(
 							start = selection.min,
@@ -51,8 +54,8 @@ public fun ParvenuParagraphToggle(
 							predicate = paragraphEqualPredicate
 						)
 					)
-				))
-			}
+				)
+			)
 		}
-	)
+	}
 }

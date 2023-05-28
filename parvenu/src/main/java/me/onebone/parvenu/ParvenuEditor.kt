@@ -18,49 +18,49 @@ public fun ParvenuEditor(
 	val textFieldValue = remember(value) { value.toTextFieldValue() }
 
 	block(
-		value = textFieldValue,
-		onValueChange = { newValue ->
-			val textChangedInRange: (Int, Int) -> Boolean = { start, end ->
-				assert(value.parvenuString.text.length == newValue.text.length) {
-					"the lambda should be called only if old and new length is the same"
-				}
-
-				!value.parvenuString.text.equalsInRange(newValue.text, start, end)
+		textFieldValue
+	) { newValue ->
+		val textChangedInRange: (Int, Int) -> Boolean = { start, end ->
+			assert(value.parvenuString.text.length == newValue.text.length) {
+				"the lambda should be called only if old and new length is the same"
 			}
 
-			val textLengthDelta = newValue.text.length - value.parvenuString.text.length
-			val newSpanStyles = value.parvenuString.spanStyles.offsetSpansAccordingToSelectionChange(
-				textLengthDelta, textChangedInRange,
-				value.selection, newValue.selection, SpanOnDeleteStart
-			)
+			!value.parvenuString.text.equalsInRange(newValue.text, start, end)
+		}
 
-			val newParagraphStyles = value.parvenuString.paragraphStyles.offsetSpansAccordingToSelectionChange(
+		val textLengthDelta = newValue.text.length - value.parvenuString.text.length
+		val newSpanStyles = value.parvenuString.spanStyles.offsetSpansAccordingToSelectionChange(
+			textLengthDelta, textChangedInRange,
+			value.selection, newValue.selection, SpanOnDeleteStart
+		)
+
+		val newParagraphStyles =
+			value.parvenuString.paragraphStyles.offsetSpansAccordingToSelectionChange(
 				textLengthDelta, textChangedInRange,
 				value.selection, newValue.selection, ParagraphOnDeleteStart
 			)
 
-			if (newSpanStyles == null && newParagraphStyles == null) {
-				onValueChange(
-					value.copy(
-						selection = newValue.selection,
-						composition = newValue.composition
-					)
+		if (newSpanStyles == null && newParagraphStyles == null) {
+			onValueChange(
+				value.copy(
+					selection = newValue.selection,
+					composition = newValue.composition
 				)
-			} else {
-				onValueChange(
-					ParvenuEditorValue(
-						parvenuString = ParvenuString(
-							text = newValue.text,
-							spanStyles = newSpanStyles ?: value.parvenuString.spanStyles,
-							paragraphStyles = newParagraphStyles ?: value.parvenuString.paragraphStyles
-						),
-						selection = newValue.selection,
-						composition = newValue.composition
-					)
+			)
+		} else {
+			onValueChange(
+				ParvenuEditorValue(
+					parvenuString = ParvenuString(
+						text = newValue.text,
+						spanStyles = newSpanStyles ?: value.parvenuString.spanStyles,
+						paragraphStyles = newParagraphStyles ?: value.parvenuString.paragraphStyles
+					),
+					selection = newValue.selection,
+					composition = newValue.composition
 				)
-			}
+			)
 		}
-	)
+	}
 }
 
 private fun String.equalsInRange(other: String, start: Int, end: Int): Boolean {
