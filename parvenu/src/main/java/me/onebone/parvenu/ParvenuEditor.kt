@@ -29,10 +29,11 @@ public fun ParvenuEditor(
 		}
 
 		val textLengthDelta = newValue.text.length - value.parvenuString.text.length
-		val newSpanStyles = value.parvenuString.spanStyles.offsetSpansAccordingToSelectionChange(
-			textLengthDelta, textChangedInRange,
-			value.selection, newValue.selection, SpanOnDeleteStart
-		)
+		val newSpanStyles =
+			value.parvenuString.spanStyles.offsetSpansAccordingToSelectionChange(
+				textLengthDelta, textChangedInRange,
+				value.selection, newValue.selection, SpanOnDeleteStart
+			)
 
 		val newParagraphStyles =
 			value.parvenuString.paragraphStyles.offsetSpansAccordingToSelectionChange(
@@ -53,7 +54,8 @@ public fun ParvenuEditor(
 					parvenuString = ParvenuString(
 						text = newValue.text,
 						spanStyles = newSpanStyles ?: value.parvenuString.spanStyles,
-						paragraphStyles = newParagraphStyles ?: value.parvenuString.paragraphStyles
+						paragraphStyles = newParagraphStyles
+							?: value.parvenuString.paragraphStyles
 					),
 					selection = newValue.selection,
 					composition = newValue.composition
