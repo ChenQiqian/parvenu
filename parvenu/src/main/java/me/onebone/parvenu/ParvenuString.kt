@@ -1,11 +1,21 @@
+@file:UseSerializers(SpanStyleSerializer::class, ParagraphStyleSerializer::class)
+
 package me.onebone.parvenu
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.json.JsonTransformingSerializer
+import me.onebone.parvenu.serializer.ParagraphStyleSerializer
+import me.onebone.parvenu.serializer.SpanStyleSerializer
+
 
 @Immutable
+@Serializable
 public class ParvenuString(
 	public val text: String,
 	public val spanStyles: List<Range<SpanStyle>> = emptyList(),
@@ -26,6 +36,7 @@ public class ParvenuString(
 	}
 
 	@Immutable
+	@Serializable
 	public data class Range<out T>(
 		val item: T,
 		val start: Int, val end: Int,
@@ -56,6 +67,14 @@ public class ParvenuString(
 		spanStyles = spanStyles,
 		paragraphStyles = paragraphStyles
 	)
+}
+
+
+public object ListRangeSpanStyleSerializer :
+	JsonTransformingSerializer<List<ParvenuString.Range<SpanStyle>>>
+		(
+		ListSerializer(ParvenuString.Range.serializer(SpanStyleSerializer))) {
+
 }
 
 internal fun ParvenuString.Range<*>.toReadableString(): String =
@@ -152,3 +171,5 @@ internal inline fun <T> List<ParvenuString.Range<T>>.removeIntersectingWithRange
 		range
 	}
 }
+
+

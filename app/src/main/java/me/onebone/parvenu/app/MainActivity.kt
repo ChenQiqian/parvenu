@@ -22,13 +22,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.serialization.json.Json
 import me.onebone.parvenu.*
 
 class MainActivity : ComponentActivity() {
+	private val json = Json { ignoreUnknownKeys = true }
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 
 		setContent {
+			var serialized by remember { mutableStateOf("") }
 			var editorValue by remember { mutableStateOf(
 				ParvenuEditorValue(
 					parvenuString = ParvenuString(
@@ -119,6 +123,36 @@ class MainActivity : ComponentActivity() {
 						}
 					}
 				}
+				Row (
+					modifier = Modifier
+						.fillMaxWidth()
+						.padding(8.dp),
+					horizontalArrangement = Arrangement.spacedBy(8.dp)
+				) {
+					Button(
+						onClick = {
+							serialized = json.encodeToString(
+								ParvenuString.serializer(),
+								editorValue.parvenuString
+							)
+						}
+					) {
+						Text("Serialize")
+					}
+					Button(
+						onClick = {
+							editorValue = editorValue.copy(
+								parvenuString =
+								json.decodeFromString(
+									ParvenuString.serializer(),
+									serialized
+								)
+							)
+						}
+					) {
+						Text("Deserialize")
+					}
+				}
 
 
 				ParvenuEditor(
@@ -136,6 +170,11 @@ class MainActivity : ComponentActivity() {
 						textStyle = TextStyle(fontSize = 21.sp)
 					)
 				}
+				TextField(
+					value = serialized,
+					onValueChange = { serialized = it },
+					modifier = Modifier.padding(16.dp).fillMaxWidth()
+				)
 			}
 		}
 	}
