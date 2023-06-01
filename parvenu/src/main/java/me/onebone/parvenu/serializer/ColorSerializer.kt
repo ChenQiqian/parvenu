@@ -14,12 +14,12 @@ public object ColorSerializer : KSerializer<Color> {
         PrimitiveSerialDescriptor("Color", PrimitiveKind.STRING)
 
     override fun serialize(encoder: Encoder, value: Color) {
-        val string = value.toArgb().toString(16).padStart(8, '0')
+        val string = value.value.toString(16).padStart(16, '0')
         encoder.encodeString(string)
     }
 
     override fun deserialize(decoder: Decoder): Color {
         val string = decoder.decodeString()
-        return Color(string.toInt(16))
+        return Color(string.toULong(16))
     }
 }

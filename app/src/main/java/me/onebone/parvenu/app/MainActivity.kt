@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
@@ -101,6 +102,25 @@ class MainActivity : ComponentActivity() {
 							onClick = { onToggle() }
 						) {
 							Text(text = "bold")
+						}
+					}
+
+					ParvenuSpanToggle(
+						value = editorValue,
+						onValueChange = {
+							editorValue = it
+						},
+						spanFactory = { SpanStyle(color = Color.Red) },
+						spanEqualPredicate = { style ->
+							style.color == Color.Red
+						}
+					) { enabled, onToggle ->
+						Button(
+							modifier = Modifier
+								.alpha(if (enabled) 1f else 0.3f),
+							onClick = { onToggle() }
+						) {
+							Text(text = "Red")
 						}
 					}
 

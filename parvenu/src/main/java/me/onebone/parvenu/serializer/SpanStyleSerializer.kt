@@ -41,6 +41,8 @@ import kotlinx.serialization.encoding.Encoder
 @Serializable
 @SerialName("SpanStyle")
 private class SpanStyleSurrogate(
+    @Serializable(with = ColorSerializer::class)
+    val color: Color = Color.Unspecified,
     @Serializable(with = TextUnitSerializer::class)
     val fontSize: TextUnit = TextUnit.Unspecified,
     @Serializable(with = FontWeightSerializer::class)
@@ -74,6 +76,7 @@ public object SpanStyleSerializer : KSerializer<SpanStyle> {
     override fun deserialize(decoder: Decoder): SpanStyle {
         val surrogate = decoder.decodeSerializableValue(SpanStyleSurrogate.serializer())
         return SpanStyle(
+            color = surrogate.color,
             fontSize = surrogate.fontSize,
             fontWeight = surrogate.fontWeight,
             fontStyle = surrogate.fontStyle,
@@ -94,6 +97,7 @@ public object SpanStyleSerializer : KSerializer<SpanStyle> {
         encoder.encodeSerializableValue(
             SpanStyleSurrogate.serializer(),
             SpanStyleSurrogate(
+                color = value.color,
                 fontSize = value.fontSize,
                 fontWeight = value.fontWeight,
                 fontStyle = value.fontStyle,
