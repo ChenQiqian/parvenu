@@ -3,10 +3,15 @@ package me.onebone.parvenu.app
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -104,43 +109,74 @@ class MainActivity : ComponentActivity() {
 							Text(text = "bold")
 						}
 					}
+				}
+				val colorList = listOf(Color.Red, Color.Blue, Color.Green)
 
-					ParvenuSpanToggle(
-						value = editorValue,
-						onValueChange = {
-							editorValue = it
-						},
-						spanFactory = { SpanStyle(color = Color.Red) },
-						spanEqualPredicate = { style ->
-							style.color == Color.Red
-						}
-					) { enabled, onToggle ->
-						Button(
-							modifier = Modifier
-								.alpha(if (enabled) 1f else 0.3f),
-							onClick = { onToggle() }
-						) {
-							Text(text = "Red")
+				ParvenuSpanPicker(
+					value = editorValue,
+					onValueChange = { editorValue = it },
+					spanStyleList = colorList.map { SpanStyle(color = it) },
+					spanEqualPredicate = { firstSpan, secondSpan ->
+						firstSpan.color == secondSpan.color
+					}
+				) { currentSelectedIndex, onToggle ->
+					Row (
+						horizontalArrangement = Arrangement.spacedBy(8.dp)
+					) {
+						colorList.forEachIndexed { index, color ->
+							Box(
+								modifier = Modifier
+									.size(24.dp)
+									.background(color)
+									.clickable { onToggle(index) }
+							) {
+								if (index == currentSelectedIndex) {
+									Icon(Icons.Default.Check, "selected")
+								}
+							}
 						}
 					}
+				}
 
-					ParvenuParagraphToggle(
-						value = editorValue,
-						onValueChange = {
-							editorValue = it
-						},
-						paragraphFactory = { ParagraphStyle(textIndent = TextIndent(16.sp, 16.sp)) },
-						paragraphEqualPredicate = { style ->
-							style.textIndent?.firstLine == 16.sp
+				val fontSizeList = listOf(14.sp, 16.sp, 18.sp)
+
+				ParvenuSpanPicker(
+					value = editorValue,
+					onValueChange = { editorValue = it },
+					spanStyleList = fontSizeList.map { SpanStyle(fontSize = it) },
+					spanEqualPredicate = { firstSpan, secondSpan ->
+						firstSpan.fontSize == secondSpan.fontSize
+					}
+				) { currentSelectedIndex, onToggle ->
+					Row (
+						horizontalArrangement = Arrangement.spacedBy(8.dp)
+					) {
+						fontSizeList.forEachIndexed { index, fontSize ->
+							Button(
+								onClick =  { onToggle(index) },
+
+								modifier = Modifier.alpha(if (index == currentSelectedIndex) 1f else 0.3f),
+							) {
+								Text(
+									text = "$fontSize",
+								)
+							}
 						}
-					) { enabled, onToggle ->
-						Button(
-							modifier = Modifier
-								.alpha(if (enabled) 1f else 0.3f),
-							onClick = { onToggle() }
-						) {
-							Text(text = "indent")
-						}
+					}
+				}
+
+				ParvenuParagraphToggle(
+					value = editorValue,
+					onValueChange = { editorValue = it },
+					paragraphFactory = { ParagraphStyle(textIndent = TextIndent(16.sp, 16.sp)) },
+					paragraphEqualPredicate = { style -> style.textIndent?.firstLine == 16.sp }
+				) { enabled, onToggle ->
+					Button(
+						modifier = Modifier
+							.alpha(if (enabled) 1f else 0.3f),
+						onClick = { onToggle() }
+					) {
+						Text(text = "indent")
 					}
 				}
 				Row (
